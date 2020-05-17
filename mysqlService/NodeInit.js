@@ -19,7 +19,7 @@ const _createPool = async()=>{
         Latitude DOUBLE,
         active BOOLEAN,
         PRIMARY KEY (NodeId)
-        )`
+        ) DEFAULT CHARSET=utf8`
     )
     return pool
   }catch(err){

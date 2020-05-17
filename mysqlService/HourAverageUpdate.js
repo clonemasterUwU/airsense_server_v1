@@ -24,7 +24,7 @@ const _createPool = async()=>{
         Hum DOUBLE,
         Tem DOUBLE,
         PRIMARY KEY (NodeId, Time)
-        )`
+        ) DEFAULT CHARSET=utf8`
     )
     return pool
   }catch(err){
@@ -35,7 +35,7 @@ const _createPool = async()=>{
 
 const _Get_Data_Hour = async (pool,timeEnd,nodeId,criteria) =>{
   try{
-    const Data_Query  = pool.query(`SELECT AVG(`+criteria+`) from data WHERE NodeId = ? AND Time BETWEEN ? AND ? `,[nodeId,timeEnd-3600,timeEnd])
+    const Data_Query  = pool.query(`SELECT AVG(`+criteria+`) from Data WHERE NodeId = ? AND Time BETWEEN ? AND ? `,[nodeId,timeEnd-3600,timeEnd])
     const Data_Result = await (Data_Query)
     return Data_Result[0][`AVG(${criteria})`]
     
@@ -51,8 +51,7 @@ const _HourAverage_Update = async (pool, timeMarker, nodeId) =>{
     let Tem_Data = await _Get_Data_Hour(pool,timeMarker,nodeId,'Tem')
     let Pm2p5_Data = await _Get_Data_Hour(pool,timeMarker,nodeId,'Pm2p5')
     let Pm10_Data = await _Get_Data_Hour(pool,timeMarker,nodeId,'Pm10')
-    await pool.query(`INSERT INTO averagehour  
-      (NodeId, Time, CO, Hum, Pm1,Pm10,Pm2p5,Tem) 
+    await pool.query(`INSERT INTO AverageHour (NodeId, Time, CO, Hum, Pm1,Pm10,Pm2p5,Tem) 
       VALUES (?,?,?,?,?,?,?,?)`,
       [nodeId,timeMarker,CO_Data,Hum_Data,Pm1_Data,Pm10_Data,Pm2p5_Data,Tem_Data])
   }catch(err){
@@ -70,7 +69,7 @@ const _HourAverage_Init = async (pool, timeMarker, nodeId) =>{
       let Tem_Data = await _Get_Data_Hour(pool,timeMarker-i*3600,nodeId,'Tem')
       let Pm2p5_Data = await _Get_Data_Hour(pool,timeMarker-i*3600,nodeId,'Pm2p5')
       let Pm10_Data = await _Get_Data_Hour(pool,timeMarker-i*3600,nodeId,'Pm10')
-      await pool.query(`INSERT INTO averagehour  
+      await pool.query(`INSERT INTO AverageHour  
         (NodeId, Time, CO, Hum, Pm1,Pm10,Pm2p5,Tem) 
         VALUES (?,?,?,?,?,?,?,?)`,
         [nodeId,timeMarker-i*3600,CO_Data,Hum_Data,Pm1_Data,Pm10_Data,Pm2p5_Data,Tem_Data])
