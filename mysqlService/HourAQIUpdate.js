@@ -19,7 +19,7 @@ const _createPool = async()=>{
         AQI DOUBLE,
         Criteria VARCHAR(10),
         PRIMARY KEY (NodeId, Time)
-        )`
+        ) DEFAULT CHARSET=utf8`
     )
     return pool
   }catch(err){
@@ -80,14 +80,15 @@ const _query_and_insert_AQI = async (pool, nodeId, timeMarker) => {
   try{
     let Pm10_array = []
     let Pm2p5_array = []
-    const result = await pool.query('SELECT CO, Pm2p5, Pm10 from AverageHour where NodeId = ? and Time <= ? ORDER BY Time LIMIT 12',[nodeId,timeMarker])
+    const result = await pool.query('SELECT CO, Pm2p5, Pm10 from AverageHour where NodeId = ? and Time <= ? ORDER BY Time DESC LIMIT 12',[nodeId,timeMarker])
     for (let i=0; i<result.length;i++){
-      Pm10_array.unshift(result[i].Pm10)
-      Pm2p5_array.unshift(result[i].Pm2p5)
+      Pm10_array.push(result[i].Pm10)
+      Pm2p5_array.push(result[i].Pm2p5)
     }
     if (result[0]) {
       let CO = result[0].CO
       const {criteria,value} = _evaluate_AQI(CO,Pm2p5_array,Pm10_array)
+
       await pool.query('INSERT INTO AQI(NodeId,Time,AQI,Criteria) VALUES (?,?,?,?)',[`${nodeId}`,timeMarker,truncated(value),criteria])
       }
     } catch(err){
