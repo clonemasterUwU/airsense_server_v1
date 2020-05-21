@@ -96,7 +96,21 @@ const update_db_HourAverage = async()=>{
     return 0
   }
 }
-
-export default update_db_HourAverage
+const init_db_HourAverage = async()=>{
+  let timeMarker = Math.floor(Date.now()/(3600000)) *3600
+  try{
+    pool = await _createPool()
+    const NodeIdQuery = pool.query("SELECT NodeId from Node where active = true;")
+    const NodeIdArray = await(NodeIdQuery)
+    for ( let i =0; i <NodeIdArray.length; i++){
+      _HourAverage_Init(pool,timeMarker,NodeIdArray[i].NodeId)
+    }
+    return 1
+  }catch(err){
+    console.log(err)
+    return 0
+  }
+}
+export { update_db_HourAverage as default, init_db_HourAverage }
 
 // setTimeout(()=>console.log("Hourly updated at: " ,new Date(timeMarker*1000)),3000)
