@@ -27,18 +27,17 @@ const _createPool = async()=>{
   }
 }
 const _nowcast = (array)=>{
-  if (array.length!=12) return null
   if ((array[0]==null&&array[1]==null) || (array[2]==null&&array[1]==null) || (array[0]==null&&array[2]==null)) return 0
   let weight,result=0
   let max =Math.max(...array)
   let min =Math.min(...array.filter(x=>x!=null))
   min/max>1/2 ? weight =min/max:weight=1/2
   if (weight==1/2){
-    for (let i=0; i<12; i++) result+=Math.pow(1/2,i+1)*array[i]
+    for (let i=0; i<array.length; i++) result+=Math.pow(1/2,i+1)*array[i]
     return result
   }
   let num = 0,denum = 0
-  for (let i=0; i<12; i++){
+  for (let i=0; i<array.length; i++){
     if (array[i]==null) continue
     num+=Math.pow(weight,i)*array[i]
     denum+=Math.pow(weight,i)
@@ -92,7 +91,7 @@ const _query_and_insert_AQI = async (pool, nodeId, timeMarker) => {
       await pool.query('INSERT INTO AQI(NodeId,Time,AQI,Criteria) VALUES (?,?,?,?)',[`${nodeId}`,timeMarker,truncated(value),criteria])
       }
     } catch(err){
-    if (err.code !='ER_DUP_ENTRY') throw new Error(err)
+    if (err.code !='ER_DUP_ENTRY') throw err
   }
 }
 
@@ -113,4 +112,4 @@ const _update_db_AQI = async () => {
     return 0
   }
 }
-export default _update_db_AQI
+export { _update_db_AQI as default, _nowcast }
