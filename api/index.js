@@ -1,5 +1,6 @@
 import express from 'express'
-
+import env from 'dotenv'
+env.config({ path:"./debug.env" })
 
 import mobileRoute from './routes/mobile.js'
 const app = express()

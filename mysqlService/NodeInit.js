@@ -88,7 +88,7 @@ export default async()=>{
     ,['BCDDC26BA2C6', 105.874327, 21.039022, false, '35 Đ. Tô Hiệu, P. Nguyễn Trãi, Hà Đông, Hà Nội, Việt Nam'])
     await pool.query(
       `INSERT INTO Node(NodeId,Longitude,Latitude,active,ReverseGeocode) VALUES(?,?,?,?,?)`
-    ,['DC4F2222F3A0',  105.800527 , 21.089296,true, '359 An Dương Vương, Phú Thượng, Tây Hồ, Hà Nội, Việt Nam'])
+    ,['DC4F2222F3A0',  105.800527 , 21.089296, false, '359 An Dương Vương, Phú Thượng, Tây Hồ, Hà Nội, Việt Nam'])
     await pool.query(`DELETE FROM data where NodeId IN (
       '4C11AE10CD26', '50029167E78E', '807D3A3D943D', '840D8E83479D', '840D8E834828',
       '84F3EB EF191', '84F3EB EF3B1', '84F3EB EF87C','84F3EB EFCD3', '84F3EB F00BC', 

@@ -23,13 +23,19 @@ router.get('/aqi', async(req,res)=>{
   }
 })
 
-
+router.use('/data',(req,res,next)=>{
+  if (req.query.time!=Math.floor(Date.now()/1000/3600)*3600) return res.status(400).send()
+  next()
+}
+)
 router.get('/data', async(req,res)=>{
   try{
-    const timeMarker = Math.floor(Date.now()/1000/3600)*3600
+    const timeMarker = parseInt(req.query.time)
+    const interval = parseInt(req.query.interval)
+    const gap=parseInt(req.query.gap)
     let result = {"AVG(CO)":[],"AVG(Pm1)":[],"AVG(Pm2p5)":[],"AVG(Pm10)":[],"AVG(Hum)":[],"AVG(Tem)":[]}
-    for ( let i =0;i<12;i++){
-    const data = await (await pool).query("select AVG(CO),AVG(Pm1),AVG(Pm2p5),AVG(Pm10),AVG(Hum),AVG(Tem) from AverageHour where Time = ?",[timeMarker-3600*i])
+    for (let i =0;i<gap;i++){
+    const data = await (await pool).query("select AVG(CO),AVG(Pm1),AVG(Pm2p5),AVG(Pm10),AVG(Hum),AVG(Tem) from AverageHour where Time = ?",[timeMarker-3600*(i+interval)])
       for (let j in data[0]){
         result[j].push(data[0][j])
       }
