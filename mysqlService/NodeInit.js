@@ -37,7 +37,7 @@ export default async()=>{
     ,['50029167E731', 105.823396, 21.063414, true, '20 Hẻm 12/2/5 Đặng Thai Mai, Quảng An, Tây Hồ, Hà Nội, Việt Nam'])
     await pool.query(
       `INSERT INTO Node(NodeId,Longitude,Latitude,active,ReverseGeocode) VALUES(?,?,?,?,?)`
-    ,['50029167E8F2', 105.863842, 20.985093, true, '409 Đường Tam Trinh, Hoàng Văn Thụ, Hoàng Mai, Hà Nội, Việt Nam'])
+    ,['50029167E8F2', 105.863842, 20.985093, false, '409 Đường Tam Trinh, Hoàng Văn Thụ, Hoàng Mai, Hà Nội, Việt Nam'])
     await pool.query(
       `INSERT INTO Node(NodeId,Longitude,Latitude,active,ReverseGeocode) VALUES(?,?,?,?,?)`
     ,['50029167ED03',105.800735,21.048163,true,'Cạnh Bảo tàng Thiên Nhiên, Nghĩa Đô, Cầu Giấy, Hà Nội, Việt Nam'])
@@ -64,7 +64,7 @@ export default async()=>{
     ,['DC4F227DC9FA',105.800828, 21.008704, false, 'Phòng 2301 Tòa A, Nhà N04, Hoàng Đạo Thúy, Việt Nam, Trung Hoà, Cầu Giấy, Hà Nội, Việt Nam'])
     await pool.query(
       `INSERT INTO Node(NodeId,Longitude,Latitude,active,ReverseGeocode) VALUES(?,?,?,?,?)`
-    ,['DC4F227DCC45', 105.80001, 21.0152513, false, '3 Trung Yên 10A, Trung Hoà, Cầu Giấy, Hà Nội, Việt Nam'])
+    ,['DC4F227DCC45', 105.80001, 21.0152513, true, '3 Trung Yên 10A, Trung Hoà, Cầu Giấy, Hà Nội, Việt Nam'])
     await pool.query(
       `INSERT INTO Node(NodeId,Longitude,Latitude,active,ReverseGeocode) VALUES(?,?,?,?,?)`
     ,['DC4F227DCA68', 105.815327, 21.041472, false, '6 Quần Ngựa, Liễu Giai, Ba Đình, Hà Nội, Việt Nam'])
@@ -79,7 +79,7 @@ export default async()=>{
     ,['DC4F227E57D1', 105.951778, 21.016234, false, 'X8 - KDT Dang Xa, Đặng Xá, Gia Lâm, Hà Nội, Việt Nam'])
     await pool.query(
       `INSERT INTO Node(NodeId,Longitude,Latitude,active,ReverseGeocode) VALUES(?,?,?,?,?)`
-    ,['50029167E78E',  105.775966, 21.014946, false, 'villa D25, Phố Trần Văn Lai, Mỹ Đình, Từ Liêm, Hà Nội, Việt Nam'])
+    ,['50029167E78E',  105.775966, 21.014946, true, 'villa D25, Phố Trần Văn Lai, Mỹ Đình, Từ Liêm, Hà Nội, Việt Nam'])
     await pool.query(
       `INSERT INTO Node(NodeId,Longitude,Latitude,active,ReverseGeocode) VALUES(?,?,?,?,?)`
     ,['DC4F227DC944', 105.780492,  20.96889, false, '119 Đường Cổ Linh, Bồ Đề, Long Biên, Hà Nội, Việt Nam'])
