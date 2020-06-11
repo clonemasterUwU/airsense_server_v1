@@ -6,8 +6,8 @@ router.get('/',(req,res)=>{
 })
 router.get('/device',async (req,res)=>{
   try{
-    const activeNode = await (await pool).query("select * from node where active=true")
-    const inactiveNode = await (await pool).query("select * from node where active=false")
+    const activeNode = await (await pool).query("select * from Node where active=true")
+    const inactiveNode = await (await pool).query("select * from Node where active=false")
     res.send({activeNode:activeNode, inactiveNode:inactiveNode})
   }catch(err){
     res.status(500).send("Internal Server Error")
@@ -16,7 +16,7 @@ router.get('/device',async (req,res)=>{
 router.get('/aqi', async(req,res)=>{
   try{
     const timeMarker = Math.floor(Date.now()/1000/3600)*3600
-    const aqi = await (await pool).query("select * from aqi where time =?",[timeMarker])
+    const aqi = await (await pool).query("select * from AQI where time =?",[timeMarker])
     res.send(aqi)
   }catch(err){
     res.status(500).send("Internal Server Error")
