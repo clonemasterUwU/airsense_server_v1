@@ -1,5 +1,6 @@
 import mysql from 'promise-mysql'
-
+import env from 'dotenv'
+env.config({ path:"./debug.env" })
 export default mysql.createPool({
       host:process.env.DB_HOST,
       user:process.env.DB_USER,
