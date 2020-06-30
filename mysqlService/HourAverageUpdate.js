@@ -1,36 +1,9 @@
 // 'use-strict'
 import mysql from 'promise-mysql'
+import moment from 'moment-timezone'
 import env from 'dotenv'
 env.config({ path:"../debug.env" })
-let pool
-const _createPool = async()=>{
-  try{
-    const pool = await mysql.createPool({
-      host:process.env.DB_HOST,
-      user:process.env.DB_USER,
-      password:process.env.DB_PASS,
-      database:process.env.DB_NAME,
-      connectionLimit:5,
-      port:process.env.DB_PORT, 
-    })
-    await pool.query(
-      `CREATE TABLE IF NOT EXISTS 
-        AverageHour (NodeId VARCHAR(20) NOT NULL, 
-        Time BIGINT NOT NULL,
-        CO DOUBLE,
-        Pm1 DOUBLE,
-        PM2p5 DOUBLE,
-        Pm10 DOUBLE,
-        Hum DOUBLE,
-        Tem DOUBLE,
-        PRIMARY KEY (NodeId, Time)
-        ) DEFAULT CHARSET=utf8`
-    )
-    return pool
-  }catch(err){
-    throw err
-  }
-}
+import createPool from './dbconfig.js'
 
 
 const _Get_Data_Hour = async (pool,timeEnd,nodeId,criteria) =>{
@@ -82,35 +55,30 @@ const _HourAverage_Init = async (pool, timeMarker, nodeId) =>{
 const update_db_HourAverage = async()=>{
   let timeMarker = Math.floor(Date.now()/(3600000)) *3600
   try{
-    pool = await _createPool()
-    const NodeIdQuery = pool.query("SELECT NodeId from Node where active = true;")
-    const NodeIdArray = await(NodeIdQuery)
+    const pool = await createPool()
+    const NodeIdArray = await pool.query("SELECT NodeId from Node where active = true;")
     for ( let i =0; i <NodeIdArray.length; i++){
       _HourAverage_Update(pool,timeMarker,NodeIdArray[i].NodeId)
       // run when init
       // _HourAverage_Init(pool,timeMarker,NodeIdArray[i].NodeId)
     }
-    return 1
+    console.log(`Success update AverageHour database at: ${moment(timeMarker*1000).tz('Asia/Ho_Chi_Minh').format('HH DD MM YYYY')}`)
   }catch(err){
-    console.log(err)
-    return 0
+    console.log(`Fail update AverageHour database at: ${moment(timeMarker*1000).tz('Asia/Ho_Chi_Minh').format('HH DD MM YYYY')} due to:\n${err}`)
   }
 }
 const init_db_HourAverage = async()=>{
   let timeMarker = Math.floor(Date.now()/(3600000)) *3600
   try{
-    pool = await _createPool()
-    const NodeIdQuery = pool.query("SELECT NodeId from Node where active = true;")
-    const NodeIdArray = await(NodeIdQuery)
+    const pool = await createPool()
+    const NodeIdArray = await pool.query("SELECT NodeId from Node where active = true;")
     for ( let i =0; i <NodeIdArray.length; i++){
       _HourAverage_Init(pool,timeMarker,NodeIdArray[i].NodeId)
     }
-    return 1
+  console.log(`Success init AverageHour database at: ${moment(timeMarker*1000).tz('Asia/Ho_Chi_Minh').format('HH DD MM YYYY')}`)
   }catch(err){
-    console.log(err)
-    return 0
+    console.log(`Fail init AverageHour database at: ${moment(timeMarker*1000).tz('Asia/Ho_Chi_Minh').format('HH DD MM YYYY')} due to:\n${err}`)
   }
 }
 export { update_db_HourAverage as default, init_db_HourAverage }
 
-// setTimeout(()=>console.log("Hourly updated at: " ,new Date(timeMarker*1000)),3000)

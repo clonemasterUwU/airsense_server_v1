@@ -1,31 +1,8 @@
 
 import mysql from 'promise-mysql'
-let pool
+import moment from 'moment-timezone'
+import getPool from './dbconfig.js'
 
-const _createPool = async()=>{
-  try{
-    const pool = await mysql.createPool({
-      host:process.env.DB_HOST,
-      user:process.env.DB_USER,
-      password:process.env.DB_PASS,
-      database:process.env.DB_NAME,
-      connectionLimit:5,
-      port:process.env.DB_PORT,
-    })
-    await pool.query(
-      `CREATE TABLE IF NOT EXISTS 
-        AQI (NodeId VARCHAR(20) NOT NULL, 
-        Time BIGINT NOT NULL, 
-        AQI DOUBLE,
-        Criteria VARCHAR(10),
-        PRIMARY KEY (NodeId, Time)
-        ) DEFAULT CHARSET=utf8`
-    )
-    return pool
-  }catch(err){
-    throw err
-  }
-}
 const _nowcast = (array)=>{
   if ((array[0]==null&&array[1]==null) || (array[2]==null&&array[1]==null) || (array[0]==null&&array[2]==null)) return 0
   let weight,result=0
@@ -73,7 +50,7 @@ const _evaluate_AQI = (CO,Pm2p5_array,Pm10_array)=>{
   }
 }
 const truncated= (num) =>{
-  return Math.floor(num*100)/100
+  return (Math.floor(num*100)/100).toFixed(2)
 }
 const _query_and_insert_AQI = async (pool, nodeId, timeMarker) => {
   try{
@@ -95,21 +72,20 @@ const _query_and_insert_AQI = async (pool, nodeId, timeMarker) => {
   }
 }
 
-const _update_db_AQI = async () => {
+const update_db_AQI = async () => {
   let timeMarker = Math.floor(Date.now()/(3600000)) *3600
   try{
-    pool = await _createPool()
-    const NodeIdQuery = pool.query("SELECT NodeId from Node where active = true;")
-    const NodeIdArray = await(NodeIdQuery)
+    const pool = await getPool()
+    const NodeIdArray = await pool.query("SELECT NodeId from Node where active = true;")
     for ( let i =0; i <NodeIdArray.length; i++){
       // for( let j=0; j<12; j++){
-        _query_and_insert_AQI(pool,NodeIdArray[i].NodeId,timeMarker) //-3600*j)
+        await _query_and_insert_AQI(pool,NodeIdArray[i].NodeId,timeMarker) //-3600*j)
       // }
     }
-    return 1
+    console.log(`Success update AQI database at: ${moment(timeMarker*1000).tz('Asia/Ho_Chi_Minh').format('HH DD MM YYYY')}`)
   }catch(err){
-    console.log(err)
-    return 0
+    console.log(`Fail update AQI database at: ${moment(timeMarker*1000).tz('Asia/Ho_Chi_Minh').format('HH DD MM YYYY')} due to:\n${err}`)
   }
 }
-export { _update_db_AQI as default, _nowcast }
+
+export { update_db_AQI as default, _nowcast }
