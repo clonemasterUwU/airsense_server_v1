@@ -9,7 +9,7 @@ const getPool = async() =>{
     user:process.env.DB_USER,
     password:process.env.DB_PASS,
     database:process.env.DB_NAME,
-    connectionLimit:5,
+    connectionLimit:10,
     port:process.env.DB_PORT,
   })
   return pool
